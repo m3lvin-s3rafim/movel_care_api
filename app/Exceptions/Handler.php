@@ -44,11 +44,10 @@ class Handler extends ExceptionHandler
         });
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    public function unauthenticated($request, AuthenticationException $exception)
     {
-        return response()->json([
-            'error' => 'Unauthenticated.',
-            'message' => 'User not authenticated.'
-        ], 401);
+        return $request->is('api/*')
+            ? response()->json(['message' => $exception->getMessage()], 401)
+            : redirect()->guest($exception->redirectTo() ?? route('login'));
     }
 }

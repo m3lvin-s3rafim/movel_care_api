@@ -49,15 +49,26 @@ class AuthController extends Controller
         return response()->json([
             'message'     => 'User created!',
             'data'        => $user,
-            'accessToken' => $accessToken
+            'accessToken' => [
+                'type'       => 'Bearer',
+                'token'      => $accessToken->accessToken,
+                'expires_at' => Carbon::parse(
+                    $accessToken->token->expires_at
+                )->toDateTimeString(),
+            ]
         ], 201);
     }
 
     public function logout(Request $request)
     {
+        $request->user()->token()->revoke();
+        return response()->json([
+            'message' => 'User Logged Out'
+        ]);
     }
 
     public function profile(Request $request)
     {
+        return response()->json($request->user());
     }
 }
