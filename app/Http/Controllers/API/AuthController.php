@@ -28,6 +28,8 @@ class AuthController extends Controller
                 'message' => 'Unauthorized'
             ], 401);
         }
+
+        return response()->json($request->user()->createToken('REVOKE_ACCESS'), 200);
     }
 
     public function register(Request $request)
@@ -64,7 +66,7 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
         return response()->json([
             'message' => 'User Logged Out'
-        ]);
+        ], 204);
     }
 
     public function profile(Request $request)
